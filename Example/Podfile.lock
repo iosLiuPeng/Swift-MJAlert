@@ -1,0 +1,26 @@
+PODS:
+  - Swift-MJAlert (0.1.0):
+    - Swift-MJModule/Alert
+  - Swift-MJModule (0.1.0):
+    - Swift-MJModule/Core (= 0.1.0)
+  - Swift-MJModule/Alert (0.1.0):
+    - Swift-MJModule/Core
+  - Swift-MJModule/Core (0.1.0)
+
+DEPENDENCIES:
+  - Swift-MJAlert (from `/Users/liupengi/Documents/OhBug/Swift-MJAlert`)
+  - Swift-MJModule (from `/Users/liupengi/Documents/OhBug/Swift-MJModule`)
+
+EXTERNAL SOURCES:
+  Swift-MJAlert:
+    :path: "/Users/liupengi/Documents/OhBug/Swift-MJAlert"
+  Swift-MJModule:
+    :path: "/Users/liupengi/Documents/OhBug/Swift-MJModule"
+
+SPEC CHECKSUMS:
+  Swift-MJAlert: b41e0f38d4d9ea5147ac305529c3260412edd556
+  Swift-MJModule: 8483182a098c35f824ae55426e3d24b17b3b972a
+
+PODFILE CHECKSUM: d0f929cf9169ea52ed484cab82594af7d2c4cd42
+
+COCOAPODS: 1.5.2

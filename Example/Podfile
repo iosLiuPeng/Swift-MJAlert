@@ -1,0 +1,149 @@
+platform :ios, '9.0'
+source 'git@git.musjoy.com:PodSpecs.git'
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'Example' do
+  use_frameworks!
+
+  pod 'Swift-MJModule',       :path => '/Users/liupengi/Documents/OhBug/Swift-MJModule'
+  pod 'Swift-MJAlert',        :path => '/Users/liupengi/Documents/OhBug/Swift-MJAlert'
+
+end
+
+post_install do |installer|
+    
+    pods_project = installer.pods_project
+    
+    # 获取pod_name对应的组
+    pod_name = "Swift-MJModule"
+    module_config_name = "ModuleConfig"
+    module_register_str = "ModuleRegister"
+    
+    specs = installer.analysis_result.specifications
+    group = pods_project.group_for_spec(pod_name)
+    
+    # 获取跟路径
+    base_path = installer.podfile.defined_in_file.dirname
+    public_path = base_path + 'Public'
+    # 遍历该公用目录
+    the_other_swift_flags = ''
+    file_refs = []
+    Dir.foreach(public_path) do |aFile|
+        # 读取后缀
+        ext = File.extname(aFile)
+        if ext == ".swift"
+            basename = File.basename(aFile, ext)
+            p basename
+            the_other_swift_flags += (' -D' + basename)
+            # 添加到project
+            ref = pods_project.add_file_reference(public_path + aFile, group, true, base_path)
+            file_refs << ref
+        end
+    end
+    
+    ## 导入注册的模块
+    # 读取所有注册的模块
+    module_configs_str = "\n\n"
+    agroup = installer.sandbox.specification('Alamofire')
+    specs.each do |spec|
+        if spec.prepare_command
+            index = spec.prepare_command.index(module_register_str + ':')
+            if index != nil
+                module_config = spec.prepare_command[index+module_register_str.length+1..-1]
+                module_configs_str += "    // #{spec.name}\n"
+                module_configs_str += "    #{module_config},\n\n"
+            end
+        end
+    end
+    # 添加 ModuleConfig.swift，保存到 Pods/ModuleConfig.swift
+    pods_base_path = base_path + 'Pods'
+    module_config_file = module_config_name + ".swift"
+    the_module_config_path = pods_base_path + module_config_file
+    if !File::exists?(the_module_config_path)
+        # 如果文件不存在，拷贝一个模板过来
+        origin_module_config_path = group.path + '/' + module_config_name + '.swift'
+        FileUtils.cp(origin_module_config_path, the_module_config_path)
+    end
+    # 将模块字符串替换进去
+    if File::exists?(the_module_config_path)
+        file_data = File.read(the_module_config_path)
+        start_index = file_data.index('// {start}')
+        start_str = file_data[0...start_index+10]
+        end_index = file_data.index('// {end}')
+        end_str = '    ' + file_data[end_index..-1]
+        new_file_data = start_str + module_configs_str + end_str
+        # 写入文件
+        File.open(the_module_config_path, 'w').write(new_file_data)
+        # 添加到项目
+        ref = pods_project.add_file_reference(the_module_config_path, group, true, pods_base_path)
+        file_refs << ref
+        the_other_swift_flags += (' -D' + module_config_name)
+    end
+    
+    # 将Public的文件和ModuleConfig.swift 添加到target
+    the_pod_target = installer.pod_targets.find { |target| target.pod_name == pod_name }
+    the_pod_target.native_target.add_file_references(file_refs)
+    
+    
+    # 添加模块配置数据
+    # 读取用户中多出来的宏定义
+    the_user_config =  installer.aggregate_targets.first.xcconfigs.first.last
+    a_gcc_config = the_user_config.attributes['OTHER_SWIFT_FLAGS']
+    other_swift_flags = a_gcc_config.split("$(inherited) ")[1]
+    p other_swift_flags
+    # 找到对应需要配置的文件
+    
+    # 添加宏定义
+    installer.pod_targets.sort_by(&:name).each do |target|
+        
+        # 跳过没有不需要编译的target
+        next if target.target_definitions.flat_map(&:dependencies).empty?
+        next if !target.should_build?
+        
+        # 重新保存每个pod target
+        path = target.xcconfig_path
+        xcconfig_gen = Generator::XCConfig::PodXCConfig.new(target)
+        xcconfig = xcconfig_gen.generate
+        the_build_setting = {
+            'FRAMEWORK_SEARCH_PATHS'    => '"${PODS_CONFIGURATION_BUILD_DIR}/**"',
+            'OTHER_SWIFT_FLAGS'         => other_swift_flags
+        }
+        if target.name == pod_name
+            # 指定模块需要多加入Public的宏定义
+            the_build_setting['OTHER_SWIFT_FLAGS'] += the_other_swift_flags
+        end
+        xcconfig.merge!(the_build_setting)
+        xcconfig.save_as(path)
+        
+    end
+    
+    # 项目target添加一次framework安装，有可能不需要
+    aggregate_targets = installer.aggregate_targets
+    aggregate_targets.sort_by(&:name).each do |target|
+        
+        # 重新保存每个pod target
+        path = target.embed_frameworks_script_path
+        framework_paths_by_config = target.framework_paths_by_config
+        anything_changed = 0
+        framework_paths_by_config.each do |config_key, path_config|
+            
+            module_config_key = pod_name + '.framework'
+            the_config = path_config.find { |module_config| module_config[:name] == module_config_key }
+            if the_config == nil
+                next
+            end
+            path_config.push(the_config)
+            anything_changed = 1
+        end
+        
+        # 有变化才更新文件
+        if anything_changed == 1
+            generator = Generator::EmbedFrameworksScript.new(framework_paths_by_config)
+            if path.exist?
+                FileUtils.rm(path)
+            end
+            generator.save_as(path)
+        end
+    end
+    
+end

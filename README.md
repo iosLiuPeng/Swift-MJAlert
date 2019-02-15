@@ -1,5 +1,5 @@
 # MJAlert
-----
+
 按添加的顺序，依次弹出内容视图（Alert、ActionSheet、UIView、UIViewController等），上一个内容视图关闭后自动弹出下一个
 
 
@@ -8,7 +8,8 @@
 * 功能: 弹出内容视图 (一次弹出全部，后来者居上)
 * 支持弹出: Alert、ActionSheet
 
-详细用法见：
+详细用法见：  
+
 [弹出Alert](#弹出Alert)  
 
 [弹出ActionSheet](#弹出ActionSheet)
@@ -45,6 +46,7 @@
 ```
   
   
+
 #### 弹出ActionSheet
 使用ActionSheet样式时，必须传入弹出框所依靠的视图。（ipad上ActionSheet样式需要）
 
@@ -73,6 +75,7 @@
 ```
   
   
+
 #### 弹出UIView
 ```swift
     /// 显示一个自定义视图，需要自己手动调移除方法
@@ -89,6 +92,7 @@
 
   
   
+
 #### 弹出UIViewController
 ```swift
     /// 弹出一个控制器，需要自己掉自己手动调移除方法

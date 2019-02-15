@@ -53,7 +53,7 @@ public class Alert: ModuleAlert {
 // MARK: - Show Alert
 extension Alert {
 
-    /// 显示一个弹框，自带确定按钮
+    /// 显示一个弹框，带有确定按钮
     public static func showAlert(title: String?, message: String?, completion: AlertCompletion?) {
         var info = [AlertInfoKey: String]()
         info[.title] = title
@@ -82,7 +82,7 @@ extension Alert {
 // MARK: - Show ActionSheet
 extension Alert {
     
-    /// 显示一个ActionSheet，自带确定按钮
+    /// 显示一个ActionSheet，带有确定按钮
     public static func showActionSheet(title: String?, message: String?, onView: UIView, completion: AlertCompletion?) {
         var info = [AlertInfoKey: String]()
         info[.title] = title

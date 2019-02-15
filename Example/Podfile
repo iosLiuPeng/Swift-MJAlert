@@ -6,7 +6,11 @@ target 'Example' do
   use_frameworks!
 
   pod 'Swift-MJModule',       :path => '/Users/liupengi/Documents/OhBug/Swift-MJModule'
-  pod 'Swift-MJAlert',        :path => '/Users/liupengi/Documents/OhBug/Swift-MJAlert'
+  pod 'Swift-MJAlert',        :path => '/Users/liupengi/Documents/Musjoy_Swift/Swift-MJAlert'
+
+#  pod 'Swift-MJModule',       :git => 'https://github.com/iosLiuPeng/Swift-MJModule.git'
+#  pod 'Swift-MJAlert',        :git => 'https://github.com/iosLiuPeng/Swift-MJAlert.git'
+  
 
 end
 

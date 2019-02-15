@@ -8,10 +8,8 @@
 * 功能: 弹出内容视图 (一次弹出全部，后来者居上)
 * 支持弹出: Alert、ActionSheet
 
-详细用法见：  
-
-[弹出Alert](#弹出Alert)  
-
+详细用法：  
+[弹出Alert](#弹出Alert)    
 [弹出ActionSheet](#弹出ActionSheet)
 
 ****
@@ -19,7 +17,13 @@
 * 功能: 弹出内容视图 (按添加顺序弹出，一次一个，关闭后自动弹出下一个)
 * 支持弹出: Alert、ActionSheet、UIView、UIViewController  
 
-
+详细用法：  
+[弹出Alert](#弹出Alert)    
+[弹出ActionSheet](#弹出ActionSheet)    
+[弹出UIView](#弹出UIView)    
+[弹出UIViewController](#弹出UIViewController)  
+  
+  
 #### 弹出Alert
 ```swift
 	/// 显示一个弹框，带有确定按钮

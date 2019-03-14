@@ -11,7 +11,7 @@
 详细用法：  
 [弹出Alert](#弹出Alert)    
 [弹出ActionSheet](#弹出ActionSheet)
-
+[解析原始数据](#解析原始数据)
 ****
 ## Alert
 * 功能: 弹出内容视图 (按添加顺序弹出，一次一个，关闭后自动弹出下一个)
@@ -47,6 +47,21 @@
     TheAlert.showAlert(info: info, otherButtons: "btn1", "btn2") { (index) in
         print("clicked \(index)")
     }
+    
+    /// 显示一个弹框，有返回值，可自定义，可用于addTextField
+    var info = [AlertInfoKey: String]()
+    info[.title] = "hello"
+    info[.message] = "world"
+    info[.cancel] = "取消"
+    info[.confirm] = "确定"
+    
+    let alert = TheAlert.showCustomAlert(info: info, otherButtons: nil) { (index) in
+    print("clicked \(index)")
+    }
+    
+    alert.addTextField { (textField) in
+    
+    }
 ```
   
   
@@ -78,7 +93,47 @@
     }
 ```
   
-  
+#### 解析原始数据
+支持将原始数据，解析成Alert模块使用的数据。
+因为原始数据里面可能包含国际化信息，所以使用前，请手动加载原始数据里的国际化信息
+
+```json
+元素数据格式：
+{
+    // 国际化key部分，value存的是国际化key，当取不到对应的国际化内容时，会再从下面的“直接内容”中取
+    titleKey":"标题的国际化key"
+    messageKey":"内容的国际化key"
+    cancelKey":"取消按钮的国际化key"
+    confirmKey":"确定按钮的国际化key"
+    destructiveKey":"破坏性按钮的国际化key"
+
+    // 直接内容
+    "title":"标题",
+    "message":"内容",
+    "cancel":"取消按钮",
+    "confirm":"确定按钮",
+    "destructive":"破坏性按钮",
+    
+    // 其他按钮
+    "btns":["btn1", "btn2", "btn3", "btn4"]
+}
+```
+
+使用
+```swift
+    var dict = [String: Any]()
+
+    let comp = TheAlert.parsingOriginalInfo(dict)
+
+    TheAlert.showAlert(info: comp.info, otherButtons: comp.otherButtons) { (index) in
+    print("clicked \(index)")
+    }
+
+    TheAlert.showActionSheet(info: comp.info, otherButtons: comp.otherButtons, onView: self.line) { (index) in
+    print("clicked \(index)")
+}
+    
+```
 
 #### 弹出UIView
 ```swift

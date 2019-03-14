@@ -1,11 +1,14 @@
 PODS:
   - Swift-MJAlert (0.1.0):
     - Swift-MJModule/Alert
+    - Swift-MJModule/Localize
   - Swift-MJModule (0.1.0):
     - Swift-MJModule/Core (= 0.1.0)
   - Swift-MJModule/Alert (0.1.0):
     - Swift-MJModule/Core
   - Swift-MJModule/Core (0.1.0)
+  - Swift-MJModule/Localize (0.1.0):
+    - Swift-MJModule/Core
 
 DEPENDENCIES:
   - Swift-MJAlert (from `/Users/liupengi/Documents/Musjoy_Swift/Swift-MJAlert`)
@@ -18,9 +21,9 @@ EXTERNAL SOURCES:
     :path: "/Users/liupengi/Documents/OhBug/Swift-MJModule"
 
 SPEC CHECKSUMS:
-  Swift-MJAlert: b41e0f38d4d9ea5147ac305529c3260412edd556
+  Swift-MJAlert: ca823ea1b3529933c8865f652886c1e26670f1cc
   Swift-MJModule: 8483182a098c35f824ae55426e3d24b17b3b972a
 
-PODFILE CHECKSUM: a7e2a06f2846a87ce2ad87ad5c0da4785c33c735
+PODFILE CHECKSUM: 086040cd03c49c53051b9cc4872de7936aa82187
 
-COCOAPODS: 1.5.2
+COCOAPODS: 1.5.3

@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
        'OTHER_SWIFT_FLAGS' => '-DMODULE_ALERT'
     }
     s.dependency "Swift-MJModule/Alert"
+    s.dependency "Swift-MJModule/Localize"
 
     s.prepare_command = 'exit 0;ModuleRegister:"Alert"            : "MJAlert.Alert"'
 end

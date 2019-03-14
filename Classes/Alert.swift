@@ -59,7 +59,7 @@ extension Alert {
         info[.title] = title
         info[.message] = message
         
-        Alert.shared.add(.alert, info: info, otherButtons: nil, onView: nil, completion: completion)
+        _ = Alert.shared.add(.alert, info: info, otherButtons: nil, onView: nil, completion: completion)
     }
     
     /// 显示一个弹框，自己处理按钮本地化
@@ -70,12 +70,18 @@ extension Alert {
         info[.cancel] = cancel
         info[.confirm] = confirm
         
-        Alert.shared.add(.alert, info: info, otherButtons: nil, onView: nil, completion: completion)
+        _ = Alert.shared.add(.alert, info: info, otherButtons: nil, onView: nil, completion: completion)
     }
     
     /// 显示一个弹框，支持多个按钮，自己处理按钮本地化
-    public static func showAlert(info: [AlertInfoKey: String], otherButtons: String..., completion: AlertCompletion?) {
-        Alert.shared.add(.alert, info: info, otherButtons: otherButtons, onView: nil, completion: completion)
+    public static func showAlert(info: [AlertInfoKey: String], otherButtons: [String]?, completion: AlertCompletion?) {
+        _ = Alert.shared.add(.alert, info: info, otherButtons: otherButtons, onView: nil, completion: completion)
+    }
+    
+    /// 显示一个弹框，有返回值，可自定义，可用于addTextField
+    public static func showCustomAlert(info: [AlertInfoKey: String], otherButtons: [String]?, completion: AlertCompletion?) -> UIAlertController {
+        // 之所以只给这一个方法加返回值，是因为调用函数后，不适用返回值会有警告，而我们用到弹框返回值的情况并不多，所以不给每个函数都加
+        return Alert.shared.add(.alert, info: info, otherButtons: otherButtons, onView: nil, completion: completion)
     }
 }
 
@@ -88,7 +94,7 @@ extension Alert {
         info[.title] = title
         info[.message] = message
         
-        Alert.shared.add(.actionSheet, info: info, otherButtons: nil, onView: onView, completion: completion)
+        _ = Alert.shared.add(.actionSheet, info: info, otherButtons: nil, onView: onView, completion: completion)
     }
     
     /// 显示一个ActionSheet，自己处理按钮本地化
@@ -99,12 +105,12 @@ extension Alert {
         info[.cancel] = cancel
         info[.confirm] = confirm
         
-        Alert.shared.add(.actionSheet, info: info, otherButtons: nil, onView: onView, completion: completion)
+        _ = Alert.shared.add(.actionSheet, info: info, otherButtons: nil, onView: onView, completion: completion)
     }
     
     /// 显示一个ActionSheet，支持多个按钮，自己处理按钮本地化
-    public static func showActionSheet(info: [AlertInfoKey: String], otherButtons: String..., onView: UIView, completion: AlertCompletion?) {
-        Alert.shared.add(.actionSheet, info: info, otherButtons: otherButtons, onView: onView, completion: completion)
+    public static func showActionSheet(info: [AlertInfoKey: String], otherButtons: [String]?, onView: UIView, completion: AlertCompletion?) {
+        _ = Alert.shared.add(.actionSheet, info: info, otherButtons: otherButtons, onView: onView, completion: completion)
     }
 }
 
@@ -214,12 +220,9 @@ extension Alert {
 // MARK: - Add
 extension Alert {
     /// 添加一个弹框
-    func add(_ style: UIAlertController.Style, info: [AlertInfoKey: String], otherButtons: [String]?, onView: UIView?, completion: AlertCompletion?) {
+    func add(_ style: UIAlertController.Style, info: [AlertInfoKey: String], otherButtons: [String]?, onView: UIView?, completion: AlertCompletion?) -> UIAlertController {
         let title = info[.title]
         let message = info[.message]
-        
-        // 标题或内容必有一个
-        guard title != nil || message != nil else { return }
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         var offset = 1;/// .default样式按钮的序号
@@ -252,7 +255,7 @@ extension Alert {
         
         // 取消、确定按钮必须有一个（除了无按钮样式）
         if alert.actions.count == 0 {
-            alert.addAction(UIAlertAction(title: localizeString(.OK), style: .default, handler: { (AlertAction) in
+            alert.addAction(UIAlertAction(title: "OK".locString, style: .default, handler: { (AlertAction) in
                 closeBlock(1)
             }))
             offset += 1
@@ -281,7 +284,7 @@ extension Alert {
         if UIDevice.current.userInterfaceIdiom == .pad && style == .actionSheet {
             // 必须要有一个按钮，不然点其他地方弹框消失了，window没消失
             if  alert.actions.count == 0 {
-                alert.addAction(UIAlertAction(title: localizeString(.Cancel) , style: .cancel, handler: { (AlertAction) in
+                alert.addAction(UIAlertAction(title: "Cancel".locString, style: .cancel, handler: { (AlertAction) in
                     closeBlock(0)
                 }))
             }
@@ -295,6 +298,8 @@ extension Alert {
     
         // 加入弹框数组，会自动弹出
         viewControllers.append(alert)
+        
+        return alert
     }
 }
 
@@ -308,47 +313,4 @@ extension Alert {
         rootVC.present(viewController, animated: true, completion: nil)
     }
     
-}
-
-
-// MARK: - Localize
-extension Alert {
-    /// 可以国际化的文案
-    enum LocalizeKey: String {
-        case OK
-        case Cancel
-    }
-    
-    /// 国际化文案（只有中、英、繁）
-    func localizeString(_ key: LocalizeKey) -> String {
-        var str = key.rawValue
-        
-        guard let language = Locale.preferredLanguages.first else { return str }
-        
-        switch language {
-        case let lan where lan.hasPrefix("zh"):
-            if lan.range(of: "Hans") != nil {
-                // 简体中文
-                switch key {
-                case .OK:
-                    str = "确定"
-                case .Cancel:
-                    str = "取消"
-                }
-            } else {
-                // 繁體中文
-                switch key {
-                case .OK:
-                    str = "確定"
-                case .Cancel:
-                    str = "取消"
-                }
-            }
-        default:
-            // 英语
-            break
-        }
-
-        return str
-    }
 }

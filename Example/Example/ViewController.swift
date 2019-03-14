@@ -26,11 +26,83 @@ class ViewController: UIViewController {
         
 //        normalAlertTest()
         
-        defaultAlertTest()
+//        defaultAlertTest()
+        
+//        noTitleAlert()
+        
+//        addTextFiledAlert()
+        
+        parsingInfoText()
     }
     
     @IBAction func clickAction(_ sender: Any) {
         TheAlert.showAlert(title: "hello", message: "world") { (index) in
+            print("clicked \(index)")
+        }
+    }
+    
+    func parsingInfoText() {
+        var dict = [String: Any]()
+        dict["title"] = "title"
+        dict["message"] = "message"
+        dict["cancel"] = "cancel"
+        dict["confirm"] = ""
+        dict["destructive"] = "destructive"
+        
+        dict["titleKey"] = "titleKey"
+        dict["messageKey"] = "messageKey"
+        dict["cancelKey"] = "cancelKey"
+        dict["confirmKey"] = "confirmKey"
+        dict["destructiveKey"] = "destructiveKey"
+
+        let comp = TheAlert.parsingOriginalInfo(dict)
+        
+        TheAlert.showAlert(info: comp.info, otherButtons: comp.otherButtons) { (index) in
+            print("clicked \(index)")
+        }
+        
+        TheAlert.showActionSheet(info: comp.info, otherButtons: comp.otherButtons, onView: self.line) { (index) in
+            print("clicked \(index)")
+        }
+    }
+    
+    func addTextFiledAlert() {
+        var info = [AlertInfoKey: String]()
+        info[.title] = "hello"
+        info[.message] = "world"
+        info[.cancel] = "取消"
+        info[.confirm] = "确定"
+        
+        TheAlert.showAlert(info: info, otherButtons: nil, completion: nil)
+                
+        let alert = TheAlert.showCustomAlert(info: info, otherButtons: nil) { (index) in
+            print("clicked \(index)")
+        }
+        
+        alert.addTextField { (textField) in
+            
+        }
+        
+        
+        
+    }
+    
+    func noTitleAlert() {
+        TheAlert.showAlert(title: nil, message: nil) { (index) in
+            print("clicked \(index)")
+        }
+        
+        TheAlert.showAlert(title: "", message: "") { (index) in
+            print("clicked \(index)")
+        }
+        
+        TheAlert.showActionSheet(title: nil, message: nil, onView: self.line) { (index) in
+            print("clicked \(index)")
+        }
+        
+        var info = [AlertInfoKey: String]()
+        info[.cancel] = "取消"
+        TheAlert.showActionSheet(info: info, otherButtons: ["btn2", "btn3", "btn4", "btn5"], onView: self.line) { (index) in
             print("clicked \(index)")
         }
     }
@@ -51,7 +123,7 @@ class ViewController: UIViewController {
             print("clicked \(index)")
         }
         
-        TheAlert.showAlert(info: info, otherButtons: "btn1", "btn2") { (index) in
+        TheAlert.showAlert(info: info, otherButtons: ["btn1", "btn2"]) { (index) in
             print("clicked \(index)")
         }
 
@@ -74,7 +146,7 @@ class ViewController: UIViewController {
             print("clicked \(index)")
         }
 
-        TheAlert.showActionSheet(info: info, otherButtons: "btn2", "btn3", "btn4", "btn5", onView: self.line) { (index) in
+        TheAlert.showActionSheet(info: info, otherButtons: ["btn2", "btn3", "btn4", "btn5"], onView: self.line) { (index) in
             print("clicked \(index)")
         }
         

@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
     s.module_name     = 'MJAlert'
 
     s.version         = "0.1.0"
-    s.swift_version   = '4.2'
+    s.swift_version   = '5.0'
     s.summary         = "This is a module management center in swift"
     s.homepage        = "https://github.com/iosLiuPeng/Swift-MJAlert"
     s.license         = { :type => 'MIT', :file => 'LICENSE' }
